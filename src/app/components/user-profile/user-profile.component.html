@@ -1,0 +1,128 @@
+<div class="container mx-auto h-full w-full p-10">
+  <div *ngIf="showInputSection"
+    class="inputSection pt-4 text-xl relative flex flex-col bg-gray-100 w-2/3 h-2/3 m-auto items-center justify-center">
+    <div>
+      <h2 class="mb-4 items-center justify-center flex font-bold"> GitHub User Search </h2>
+    </div>
+    <form class="bg-gray-100 w-90 h-50 flex items-center justify-center">
+      <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+      <div class="relative">
+        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+          <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+            fill="none" viewBox="0 0 20 20">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+          </svg>
+        </div>
+        <input type="search" id="default-search" name="username" [(ngModel)]="username" (keyup.enter) = "searchUser()"
+          class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Search Username..." required>
+        
+      </div>
+    </form>
+    <div *ngIf="userNotFound" class="notFound pt-4 font-bold flex justify-center items-center">
+      <h2 class="text-xl">No User Found</h2>
+    </div>
+
+  </div>
+
+
+  <div *ngIf="isLoading" class="loading mb-4 flex justify-center items-center">
+
+    <div role="status"
+      class="space-y-8 animate-pulse md:space-y-0 md:space-x-8 rtl:space-x-reverse md:flex md:items-center">
+      <div class="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
+        <svg class="w-10 h-10 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor" viewBox="0 0 20 18">
+          <path
+            d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+        </svg>
+      </div>
+      <div class="w-full">
+        <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[440px] mb-2.5"></div>
+        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[460px] mb-2.5"></div>
+        <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+      </div>
+      <span class="sr-only">Loading...</span>
+    </div>
+
+
+  </div>
+
+  <div class="user" *ngIf="!isLoading && !showInputSection && userDetails && userRepos">
+    <div class="container">
+      <div class="user-profile">
+        <div class="top flex justify-center items-center mr-4">
+          <div class="left flex items-center w-3/4">
+            <div class="image m-0 p-0">
+              <img src="{{ userDetails.avatar_url }}" class="m-0 rounded-full w-10 h-10 md:w-48 md:h-48" />
+              <p class="mt-2 text-gray-800 flex flex-row">
+                <a href="https://github.com/{{ userDetails.login }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                  <svg class="h-5 w-5 text-black-500 mr-2" width="12" height="12" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" />
+                    <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+                    <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+                  </svg>
+                </a>
+                <span class="hidden sm:inline">https://github.com/{{ userDetails.login }}</span>
+              </p>
+            </div>
+            <div class="details ml-10 ">
+              <h2 class="text-xs  md:text-3xl font-bold mb-2">{{ userDetails.name }}</h2>
+              <p class="text-xs md:text-xl text-black-700 mb-2">{{ userDetails.bio }}</p>
+              <p class="text-gray-700 flex flex-row p-2 mb-2 space-x-10">
+                <svg class="h-6 w-6 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {{ userDetails.location }}
+              </p>
+              <div *ngIf="userDetails.twitter_username">
+                <p class="text-gray-700">
+                  Twitter:
+                  <a href="https://twitter.com/{{userDetails.twitter_username }}">
+                    <span class="hidden sm:inline">
+                      https://twitter.com/{{userDetails.twitter_username}}
+                    </span>
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="right w-1/4 items-end flex flex-col">
+            <button (click)="resetSearch()" class="ml-10 items-end bg-gray-500 text-white px-4 py-2 rounded">
+              Search
+            </button>
+
+
+            <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">perPage</label>
+            <select id="countries"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-45 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              [(ngModel)]="perPage" (ngModelChange)="onPerPageChange()">
+              <option selected>perPage</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+
+
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="bottom mt-4">
+      <app-repositories [userName]="username" [perPage]="perPage"></app-repositories>
+    </div>
+
+  </div>
+</div>
